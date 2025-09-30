@@ -1,0 +1,40 @@
+ Test Results Summary:
+  - 10 different MMSIs tested: Only 1 vessel found (10% success rate)
+  - Successful case: MMSI 636023801 (MSC LAUSANNE VI) - likely accidental general traffic
+  - Failed cases: Including MMSI 256506000 tested multiple times while confirmed transmitting
+
+  Key Evidence:
+  1. General test finds MMSI 235052106 → Success
+  2. Same MMSI with filter immediately after → Failure
+  3. Vessel active on VesselFinder (0 minutes) → AISstream filter still fails
+
+  Example Test Log:
+  [MMSI Test] Testing MMSI 256506000 directly against AISstream
+  [MMSI Test] Connected to AISstream, testing MMSI: 256506000
+  [MMSI Test] Sending subscription:
+  {"APIKey":"...","BoundingBoxes":[[[-90,-180],[90,180]]],"FiltersShipMMSI":["256506000"],"FilterMessageTypes":["PositionReport"]}
+  [MMSI Test] FAILED: No vessel data found for MMSI 256506000
+
+  Error Messages
+
+  No explicit error messages from AISstream. The WebSocket connects successfully but simply doesn't send any vessel data when MMSI filtering is
+  applied.
+
+  Test MMSIs Used
+
+  - ✅ 636023801 (MSC LAUSANNE VI) - Only successful case
+  - ❌ 256506000 - Failed despite confirmed transmission
+  - ❌ 235052106 - Found in general test, failed with filter
+  - ❌ 210772000 - Failed
+  - ❌ 533132807 - Failed
+  - ❌ 319238300 - Failed
+  - ❌ 636023946 - Failed
+  - ❌ 232002648 - Failed
+  - ❌ 232007488 - Failed
+  - ❌ 245241000 - Failed
+
+  Conclusion
+
+  The AISstream FiltersShipMMSI parameter appears to be fundamentally broken or extremely unreliable. Geographic filtering works perfectly, but
+  MMSI-specific filtering fails ~90% of the time even when vessels are confirmed to be transmitting. The one successful case was likely receiving
+  unfiltered general traffic due to a malformed subscription that AISstream ignored.
